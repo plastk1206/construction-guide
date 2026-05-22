@@ -446,25 +446,205 @@ footer {
   margin-top:48px;
 }
 
-/* bubble anim for hero demo */
-.blayer {
-  position:absolute; left:24px; right:24px; border-radius:6px;
-  display:flex; align-items:center; justify-content:center;
-  font-family:'JetBrains Mono',monospace; font-size:11px;
-  color:#fff; font-weight:600; letter-spacing:.04em;
+/* ── bubble demo ── */
+.demo-wrap {
+  background: #1a1a1a;
+  border-radius: 10px;
+  margin: 0 0 20px;
+  position: relative;
+  overflow: hidden;
+  height: 210px;
+  user-select: none;
 }
+
+/* 三層 */
+.demo-layer {
+  position: absolute; left: 20px; right: 20px;
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: #fff; font-weight: 600; letter-spacing: .06em;
+  z-index: 2;
+}
+
+/* 防水漆膜 */
+.layer-paint {
+  top: 18px; height: 32px;
+  background: linear-gradient(180deg, #2980b9 0%, #1a5f8a 100%);
+  z-index: 4;
+  overflow: visible;
+}
+
+/* 空鼓水泡：暫時性，氣泡撞擊時出現 */
+.blister {
+  position: absolute;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: transparent;
+  border: 5px solid #2471a3;
+  border-bottom: none;
+  box-shadow:
+    inset 0 -6px 14px rgba(0,0,0,0.55),
+    inset 0 6px 10px rgba(41,128,185,0.25),
+    0 -2px 8px rgba(41,128,185,0.3);
+  transform-origin: bottom center;
+  transform: scaleY(0);
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+}
+.blister::before {
+  content: '';
+  position: absolute;
+  inset: 4px 4px 0 4px;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: radial-gradient(ellipse at 50% 80%, rgba(0,0,0,0.7) 0%, rgba(20,40,60,0.5) 50%, transparent 100%);
+}
+.blister::after {
+  content: '';
+  position: absolute;
+  top: 18%; left: 20%; right: 55%; height: 22%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.28);
+  filter: blur(2px);
+}
+
+/* 中間水氣層 */
+.layer-steam {
+  top: 52px; height: 50px;
+  background: linear-gradient(90deg, rgba(192,57,43,.6), rgba(211,84,0,.6));
+  z-index: 3;
+}
+
+/* 水泥層 */
+.layer-cement {
+  top: 104px; height: 78px;
+  background: linear-gradient(90deg, #6d7a7a, #8a9898);
+  z-index: 2;
+}
+
+/* 白色上升氣泡 */
 .bub {
-  position:absolute; border-radius:50%;
-  background:rgba(230,126,34,.65); border:1px solid rgba(230,126,34,.9);
-  animation:bup 2.2s ease-in-out infinite;
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,1) 0%, rgba(200,230,255,0.8) 60%, rgba(160,200,240,0.5) 100%);
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 0 8px rgba(255,255,255,0.35), inset 0 1px 3px rgba(255,255,255,0.5);
+  z-index: 7;
+  opacity: 0;
+  pointer-events: none;
 }
-@keyframes bup {
-  0%  {transform:translateY(0) scale(1);   opacity:.9}
-  50% {transform:translateY(-20px) scale(1.3); opacity:1}
-  100%{transform:translateY(-40px) scale(.7); opacity:0}
+
+/* 白色圓孔：永久嵌在漆膜上的空洞（白色填充，代表氣腔穿透） */
+.void {
+  position: absolute;
+  border-radius: 50%;
+  /* 白色空洞：中心最亮，邊緣有漆膜的深藍色邊框感 */
+  background: radial-gradient(
+    circle at 40% 35%,
+    rgba(255,255,255,1)   0%,
+    rgba(235,245,255,0.95) 40%,
+    rgba(200,225,250,0.85) 65%,
+    rgba(100,160,210,0.5)  82%,
+    rgba(36,113,163,0.2)  100%
+  );
+  border: 2px solid rgba(20,70,120,0.6);
+  box-shadow:
+    inset 0 2px 5px rgba(255,255,255,0.9),
+    inset 0 -2px 4px rgba(0,50,100,0.35),
+    0 0 6px rgba(255,255,255,0.4),
+    0 1px 3px rgba(0,0,0,0.5);
+  z-index: 9;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
+/* 孔洞頂部高光，加強立體感 */
+.void::after {
+  content: '';
+  position: absolute;
+  top: 12%; left: 18%; width: 40%; height: 28%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.7);
+  filter: blur(1px);
+}
+
+/* 漆膜上方永久凸起 bump：標準半圓 */
+.bump {
+  position: absolute;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: linear-gradient(180deg,
+    rgba(80,160,220,1) 0%,
+    rgba(41,128,185,0.95) 40%,
+    rgba(26,95,138,0.9) 100%
+  );
+  box-shadow:
+    0 -3px 8px rgba(100,180,240,0.5),
+    inset 0 2px 4px rgba(255,255,255,0.35),
+    inset 0 -2px 4px rgba(0,30,70,0.3);
+  transform-origin: bottom center;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transform: scaleY(0);
+  transition: opacity 0.3s ease;
+}
+/* 凸起頂部高光線 */
+.bump::before {
+  content: '';
+  position: absolute;
+  top: 15%; left: 15%; right: 15%; height: 20%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  filter: blur(1.5px);
+}
+
+/* 空鼓 keyframe（暫時性，過場用） */
+@keyframes blisterPop {
+  0%   { transform: scaleY(0) scaleX(0.6); opacity: 0; }
+  18%  { transform: scaleY(1.1) scaleX(1.04); opacity: 1; }
+  35%  { transform: scaleY(0.92) scaleX(1.0); opacity: 1; }
+  55%  { transform: scaleY(1.0) scaleX(1.0);  opacity: 1; }
+  80%  { transform: scaleY(1.0) scaleX(1.0);  opacity: 1; }
+  100% { transform: scaleY(0) scaleX(0.6);    opacity: 0; }
+}
+
+/* bump 展開 keyframe */
+@keyframes bumpGrow {
+  0%   { transform: scaleY(0) scaleX(0.6); opacity: 0; }
+  30%  { transform: scaleY(1.15) scaleX(1.05); opacity: 1; }
+  55%  { transform: scaleY(0.9) scaleX(1.0);  opacity: 1; }
+  75%  { transform: scaleY(1.02) scaleX(1.0); opacity: 1; }
+  100% { transform: scaleY(1.0) scaleX(1.0);  opacity: 1; }
+}
+/* ── 強鹼侵蝕動畫 ── */
+.alkali-wrap {
+  background: #111;
+  border-radius: 10px;
+  margin: 16px 0 0;
+  overflow: hidden;
+  position: relative;
+}
+.alkali-label {
+  position: absolute;
+  top: 12px; left: 16px;
+  z-index: 10;
+  display: flex; align-items: center; gap: 10px;
+}
+.al-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .18em;
+  color: #e67e22;
+  background: rgba(230,126,34,.15);
+  border: 1px solid rgba(230,126,34,.35);
+  padding: 2px 8px;
+}
+.al-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: rgba(255,255,255,.3);
+  letter-spacing: .08em;
+}
+#alkaliCanvas { display: block; width: 100%; }
 </style>
-</head>
 <body>
 
 <!-- HERO -->
@@ -501,17 +681,18 @@ footer {
   </div>
 
   <!-- bubble vis -->
-  <div style="background:var(--dark);border-radius:10px;padding:28px 24px;margin:0 0 20px;position:relative;overflow:hidden;height:180px;" class="r d3">
-    <div class="blayer" style="top:20px;height:28px;background:linear-gradient(90deg,#2471a3,#2980b9);z-index:3">防水漆膜</div>
-    <div class="blayer" style="top:50px;height:44px;background:linear-gradient(90deg,rgba(192,57,43,.65),rgba(211,84,0,.65));z-index:2">
-      水氣逸散層（被封住）
-      <div class="bub" style="width:11px;height:11px;left:12%;top:8px;animation-delay:0s"></div>
-      <div class="bub" style="width:8px;height:8px;left:32%;top:14px;animation-delay:.5s"></div>
-      <div class="bub" style="width:14px;height:14px;left:54%;top:6px;animation-delay:1s"></div>
-      <div class="bub" style="width:9px;height:9px;left:74%;top:12px;animation-delay:.3s"></div>
-      <div class="bub" style="width:12px;height:12px;left:88%;top:8px;animation-delay:.8s"></div>
-    </div>
-    <div class="blayer" style="top:96px;height:56px;background:linear-gradient(90deg,#7f8c8d,#95a5a6);z-index:1">水泥基材（含水率高）</div>
+  <div class="demo-wrap r d3" id="demoWrap">
+    <!-- 防水漆膜（含空鼓凸起） -->
+    <div class="demo-layer layer-paint" id="paintLayer">防水漆膜</div>
+    <!-- 空鼓凸起點（JS 動態插入 .blister） -->
+
+    <!-- 水氣逸散層 -->
+    <div class="demo-layer layer-steam">水氣逸散層（被封住）</div>
+
+    <!-- 白色氣泡（JS 動態插入 .bub） -->
+
+    <!-- 水泥基材 -->
+    <div class="demo-layer layer-cement">水泥基材（含水率高）</div>
   </div>
 
   <!-- pH scale -->
@@ -522,6 +703,11 @@ footer {
       <div class="phmarker" style="left:88%">pH ≈ 12.5（新鮮水泥）</div>
     </div>
     <div class="phlabels"><span>0 強酸</span><span>7 中性</span><span>14 強鹼</span></div>
+  </div>
+
+  <!-- 強鹼侵蝕動畫 -->
+  <div class="alkali-wrap r d5" id="alkaliWrap">
+    <canvas id="alkaliCanvas"></canvas>
   </div>
 </section>
 
@@ -736,7 +922,136 @@ footer {
 </footer>
 
 <script>
-// Scroll reveal
+// ── Bubble + Blister + White Void + Permanent Bump ──
+(function() {
+  const wrap = document.getElementById('demoWrap');
+  if (!wrap) return;
+
+  const configs = [
+    { x: '12%',  size: 11, period: 3.0, delay: 0    },
+    { x: '28%',  size:  9, period: 3.4, delay: 0.8  },
+    { x: '46%',  size: 14, period: 2.8, delay: 1.6  },
+    { x: '63%',  size:  8, period: 3.2, delay: 0.4  },
+    { x: '79%',  size: 13, period: 3.6, delay: 1.2  },
+    { x: '91%',  size:  7, period: 2.9, delay: 2.0  },
+  ];
+
+  const paintTop    = 18;
+  const paintBottom = 50;
+  const paintMid    = (paintTop + paintBottom) / 2;
+  const cementTop   = 104;
+  const MAX_MARKS   = 10;
+  const marks = [];
+
+  function addMark(xPct, size) {
+    if (marks.length >= MAX_MARKS) {
+      const [oldV, oldB] = marks.shift();
+      oldV.style.opacity = '0';
+      oldB.style.opacity = '0';
+      setTimeout(() => { oldV.remove(); oldB.remove(); }, 500);
+    }
+
+    const jitter = (Math.random() - 0.5) * size * 0.8;
+
+    // ── 白色圓孔（嵌在漆膜層）──
+    const vSize = size * (0.9 + Math.random() * 0.5);
+    const v = document.createElement('div');
+    v.className = 'void';
+    v.style.cssText = `
+      width:${vSize}px; height:${vSize}px;
+      left:${xPct}; margin-left:${-vSize/2 + jitter}px;
+      top:${paintMid - vSize/2}px;
+    `;
+    wrap.appendChild(v);
+    requestAnimationFrame(() => requestAnimationFrame(() => { v.style.opacity = '1'; }));
+
+    // ── 漆膜上方永久凸起 bump ──
+    const bw = vSize * 2.4;
+    const bh = vSize * 1.2;
+    const b = document.createElement('div');
+    b.className = 'bump';
+    b.style.cssText = `
+      width:${bw}px; height:${bh}px;
+      left:${xPct}; margin-left:${-bw/2 + jitter}px;
+      top:${paintTop - bh}px;
+      opacity:1;
+    `;
+    wrap.appendChild(b);
+
+    b.animate([
+      { transform: 'scaleY(0) scaleX(0.5)',     opacity: 0 },
+      { transform: 'scaleY(1.2) scaleX(1.06)',  opacity: 1, offset: 0.28 },
+      { transform: 'scaleY(0.88) scaleX(1.0)',  opacity: 1, offset: 0.52 },
+      { transform: 'scaleY(1.04) scaleX(1.0)',  opacity: 1, offset: 0.74 },
+      { transform: 'scaleY(1.0) scaleX(1.0)',   opacity: 1 },
+    ], { duration: 650, easing: 'cubic-bezier(.34,1.5,.64,1)', fill: 'forwards' });
+
+    marks.push([v, b]);
+  }
+
+  configs.forEach(cfg => {
+    const s = cfg.size;
+
+    const bub = document.createElement('div');
+    bub.className = 'bub';
+    bub.style.cssText = `
+      width:${s}px; height:${s}px;
+      left:${cfg.x}; margin-left:-${s/2}px;
+      top:${cementTop - s}px;
+    `;
+    wrap.appendChild(bub);
+
+    const blister = document.createElement('div');
+    blister.className = 'blister';
+    const bw = s * 4.5;
+    const bh = s * 2.5;
+    blister.style.cssText = `
+      width:${bw}px; height:${bh}px;
+      left:${cfg.x}; margin-left:-${bw/2}px;
+      top:${paintBottom - bh}px;
+      border-width:${Math.max(4, s * 0.4)}px;
+    `;
+    wrap.appendChild(blister);
+
+    function runCycle() {
+      const riseDur  = cfg.period * 0.60 * 1000;
+      const holdDur  = cfg.period * 0.26 * 1000;
+      const fadeDur  = cfg.period * 0.14 * 1000;
+      const totalDur = riseDur + holdDur + fadeDur;
+
+      bub.animate([
+        { top: `${cementTop - s}px`,     opacity: 0 },
+        { top: `${cementTop - s}px`,     opacity: 1,   offset: 0.06 },
+        { top: `${paintBottom - s/2}px`, opacity: 0.9, offset: 0.82 },
+        { top: `${paintBottom - s/2}px`, opacity: 0,   offset: 1 },
+      ], { duration: riseDur, easing: 'ease-in', fill: 'forwards' });
+
+      const blisterDelay = riseDur * 0.78;
+      blister.animate([
+        { transform: 'scaleY(0) scaleX(0.5)',    opacity: 0 },
+        { transform: 'scaleY(1.1) scaleX(1.04)', opacity: 1,   offset: 0.15 },
+        { transform: 'scaleY(0.92) scaleX(1.0)', opacity: 1,   offset: 0.32 },
+        { transform: 'scaleY(1.0) scaleX(1.0)',  opacity: 1,   offset: 0.72 },
+        { transform: 'scaleY(0) scaleX(0.6)',    opacity: 0 },
+      ], {
+        duration: holdDur + fadeDur + riseDur * 0.22,
+        delay: blisterDelay,
+        easing: 'cubic-bezier(.34,1.4,.64,1)',
+        fill: 'forwards',
+      });
+
+      const markDelay = blisterDelay + (holdDur + fadeDur + riseDur * 0.22) * 0.85;
+      setTimeout(() => {
+        if (Math.random() < 0.65) addMark(cfg.x, s);
+      }, markDelay);
+
+      setTimeout(() => runCycle(), totalDur + 300);
+    }
+
+    setTimeout(() => runCycle(), cfg.delay * 1000);
+  });
+})();
+
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); }
@@ -813,6 +1128,741 @@ document.querySelectorAll('.stat').forEach(block => {
   }, { threshold: 0.4 });
   so.observe(block);
 });
+// ── 強鹼侵蝕動畫（Canvas）──
+(function() {
+  const wrap   = document.getElementById('alkaliWrap');
+  const canvas = document.getElementById('alkaliCanvas');
+  if (!wrap || !canvas) return;
+
+  const startObs = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    startObs.disconnect();
+    initAlkali();
+  }, { threshold: 0.3 });
+  startObs.observe(wrap);
+
+  function initAlkali() {
+    const W  = wrap.clientWidth;
+    const H  = 230;
+    canvas.width  = W * 2;
+    canvas.height = H * 2;
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2, 2);
+
+    const paintTop  = H * 0.10;
+    const paintBot  = H * 0.58;
+    const paintH    = paintBot - paintTop;
+    const erosionH  = H * 0.11;
+    const erosionBot = paintBot + erosionH;
+    const cols = Math.ceil(W);
+
+    // ── 漆膜底部侵蝕邊緣 ──
+    const paintEdge  = new Float32Array(cols).fill(paintBot);
+    const erodeSpeed = Float32Array.from({length: cols}, () => 0.006 + Math.random()*0.010);
+    const erodeAmt   = new Float32Array(cols).fill(0);
+
+    // ── 永久累積裂縫網路 ──
+    // 每條裂縫是一組節點，畫出後永遠保留
+    const allCracks = [];   // 所有已完成 + 成長中的裂縫
+    const growing   = [];   // 目前還在生長的裂縫
+    let crackTimer  = 0;
+
+    function spawnCrack(sx, sy, angle, width, depth) {
+      if (depth <= 0) return null;
+      const crack = {
+        segs: [{ x: sx, y: sy }],
+        x: sx, y: sy,
+        angle,
+        width,
+        depth,
+        done: false,
+        // 目標高度：隨 depth 決定能往上多深
+        targetY: sy - paintH * (0.08 + Math.random() * 0.35) * (depth / 3),
+        speed: 1.8 + Math.random() * 1.6,
+        hue: 32 + Math.random() * 18,
+        // 分支機率隨 depth 遞減
+        branchProb: depth >= 3 ? 0.06 : depth === 2 ? 0.04 : 0.02,
+        branchCount: 0,
+        maxBranch: depth >= 3 ? 3 : 2,
+        childSpawned: [],
+      };
+      allCracks.push(crack);
+      growing.push(crack);
+      return crack;
+    }
+
+    // 粒子（侵蝕邊緣噴出）
+    const particles = [];
+    function spawnParticle(x, y) {
+      particles.push({
+        x, y,
+        vx: (Math.random()-0.5)*0.8,
+        vy: -(Math.random()*0.6 + 0.1),
+        life: 1,
+        decay: 0.018 + Math.random()*0.02,
+        r: 0.6 + Math.random()*1.6,
+        hue: 28 + Math.random()*28,
+      });
+    }
+
+    let t = 0;
+
+    function drawFrame() {
+      ctx.clearRect(0, 0, W, H);
+      t++;
+
+      // ── 1. 水泥層底色 ──
+      const cg = ctx.createLinearGradient(0, erosionBot, 0, H);
+      cg.addColorStop(0, '#7a8888');
+      cg.addColorStop(1, '#505e5e');
+      ctx.fillStyle = cg;
+      ctx.fillRect(0, erosionBot, W, H - erosionBot);
+
+      // 呼吸光暈：橘黃色脈動，模擬強鹼高 pH 狀態
+      const breathe = (Math.sin(t * 0.045) + 1) / 2;  // 0~1 循環
+      // 整層底色隨呼吸微微偏橘
+      ctx.fillStyle = `rgba(200,100,20,${0.06 + breathe * 0.10})`;
+      ctx.fillRect(0, erosionBot, W, H - erosionBot);
+
+      // 中央放射光暈（橘黃，模擬強鹼發光核心）
+      const glowY  = erosionBot + (H - erosionBot) * 0.45;
+      const glowR  = (W * 0.55) * (0.7 + breathe * 0.3);
+      const glowG  = ctx.createRadialGradient(W/2, glowY, 0, W/2, glowY, glowR);
+      glowG.addColorStop(0,   `rgba(255,160,40,${0.18 + breathe * 0.16})`);
+      glowG.addColorStop(0.4, `rgba(220,110,20,${0.10 + breathe * 0.10})`);
+      glowG.addColorStop(1,   'rgba(200,80,10,0)');
+      ctx.fillStyle = glowG;
+      ctx.fillRect(0, erosionBot, W, H - erosionBot);
+
+      // 頂部邊緣額外亮帶（接近侵蝕層的地方最亮）
+      const edgeG = ctx.createLinearGradient(0, erosionBot, 0, erosionBot + 18);
+      edgeG.addColorStop(0, `rgba(255,160,50,${0.22 + breathe * 0.18})`);
+      edgeG.addColorStop(1, 'rgba(200,100,20,0)');
+      ctx.fillStyle = edgeG;
+      ctx.fillRect(0, erosionBot, W, 18);
+
+      // 水泥紋理：細橫線
+      for (let row = 0; row < 4; row++) {
+        const ly = erosionBot + (H - erosionBot) * (0.2 + row * 0.2);
+        ctx.beginPath();
+        ctx.moveTo(0, ly); ctx.lineTo(W, ly);
+        ctx.strokeStyle = `rgba(255,255,255,${0.04 + breathe * 0.03})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+
+      // ── 2. 侵蝕層（往上發炎感，不規則火舌邊緣）──
+      // 火舌頂邊：多頻疊加產生尖突不規則感
+      ctx.beginPath();
+      ctx.moveTo(0, erosionBot);
+      ctx.lineTo(W, erosionBot);
+      ctx.lineTo(W, paintBot);
+      for (let i = cols-1; i >= 0; i--) {
+        // 多層不同頻率疊加，產生尖刺火焰邊緣
+        const flame =
+          Math.sin(i * 0.045 + t * 0.03) * 4.5 +
+          Math.sin(i * 0.11  + t * 0.05) * 2.8 +
+          Math.sin(i * 0.22  + t * 0.07) * 1.6 +
+          Math.sin(i * 0.38  + t * 0.09) * 0.9;
+        // 負值才往上突起（正值往下縮），讓尖刺朝上
+        ctx.lineTo(i, paintBot + Math.min(0, flame) * 1.1);
+      }
+      ctx.closePath();
+      const eg = ctx.createLinearGradient(0, paintBot, 0, erosionBot);
+      eg.addColorStop(0,   'rgba(240,100,10,0.95)');
+      eg.addColorStop(0.4, 'rgba(210,75,10,0.88)');
+      eg.addColorStop(1,   'rgba(140,50,5,0.70)');
+      ctx.fillStyle = eg;
+      ctx.fill();
+
+      // 火舌尖端發光線（橘紅色邊緣）
+      ctx.beginPath();
+      for (let i = 0; i < cols; i++) {
+        const flame =
+          Math.sin(i * 0.045 + t * 0.03) * 4.5 +
+          Math.sin(i * 0.11  + t * 0.05) * 2.8 +
+          Math.sin(i * 0.22  + t * 0.07) * 1.6 +
+          Math.sin(i * 0.38  + t * 0.09) * 0.9;
+        const y = paintBot + Math.min(0, flame) * 1.1;
+        i === 0 ? ctx.moveTo(i, y) : ctx.lineTo(i, y);
+      }
+      ctx.strokeStyle = 'rgba(255,160,40,0.7)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // 火舌內部亮帶（靠近頂端更亮的橘黃）
+      const flameG = ctx.createLinearGradient(0, paintBot - 10, 0, paintBot);
+      flameG.addColorStop(0, 'rgba(255,180,50,0.45)');
+      flameG.addColorStop(1, 'rgba(255,120,20,0)');
+      ctx.fillStyle = flameG;
+      ctx.beginPath();
+      for (let i = 0; i < cols; i++) {
+        const flame =
+          Math.sin(i * 0.045 + t * 0.03) * 4.5 +
+          Math.sin(i * 0.11  + t * 0.05) * 2.8 +
+          Math.sin(i * 0.22  + t * 0.07) * 1.6 +
+          Math.sin(i * 0.38  + t * 0.09) * 0.9;
+        const y = paintBot + Math.min(0, flame) * 1.1;
+        i === 0 ? ctx.moveTo(i, y) : ctx.lineTo(i, y);
+      }
+      ctx.lineTo(W, paintBot);
+      ctx.lineTo(0, paintBot);
+      ctx.closePath();
+      ctx.fill();
+
+      // ── 3. 侵蝕量更新 ──
+      for (let i = 0; i < cols; i++) {
+        erodeAmt[i] = Math.min(1, erodeAmt[i] + erodeSpeed[i] * 0.008);
+        if (erodeAmt[i] > 0.04) {
+          const maxErode = paintH * 0.65;
+          const targetEdge = paintBot - erodeAmt[i] * maxErode
+            + Math.sin(t*0.04 + i*0.21)*1.4;
+          paintEdge[i] += (targetEdge - paintEdge[i]) * 0.045;
+          if (Math.random() < 0.003 && erodeAmt[i] > 0.18) {
+            spawnParticle(i, paintEdge[i]);
+          }
+        }
+      }
+
+      // ── 4. 裂縫生成 ──
+      crackTimer++;
+      // 定期從漆膜底部噴出新裂縫
+      if (crackTimer > 35 + Math.random()*25) {
+        const sx = 15 + Math.random()*(W-30);
+        // 新裂縫從當前 paintEdge 高度出發
+        const idx = Math.min(cols-1, Math.max(0, Math.round(sx)));
+        spawnCrack(sx, paintEdge[idx], -Math.PI/2 + (Math.random()-0.5)*0.7, 1.2 + Math.random()*0.8, 3);
+        crackTimer = 0;
+      }
+
+      // ── 5. 裂縫生長 ──
+      for (let i = growing.length-1; i >= 0; i--) {
+        const c = growing[i];
+        if (c.done) { growing.splice(i, 1); continue; }
+        if (c.y <= c.targetY) { c.done = true; growing.splice(i, 1); continue; }
+
+        // 前進（偏向上方）
+        c.angle += (Math.random()-0.5) * 0.38;
+        // 夾角限制：不能太水平
+        c.angle = Math.max(-Math.PI*0.92, Math.min(-Math.PI*0.08, c.angle));
+        c.x += Math.cos(c.angle) * c.speed;
+        c.y += Math.sin(c.angle) * c.speed;
+        c.x  = Math.max(1, Math.min(W-1, c.x));
+        c.segs.push({ x: c.x, y: c.y });
+
+        // 分支
+        if (c.branchCount < c.maxBranch && Math.random() < c.branchProb) {
+          c.branchCount++;
+          const dir = Math.random() < 0.5 ? 1 : -1;
+          const child = spawnCrack(
+            c.x, c.y,
+            c.angle + dir*(0.38 + Math.random()*0.55),
+            c.width * 0.58,
+            c.depth - 1,
+          );
+        }
+
+        // 裂縫前端偶爾噴粒子
+        if (Math.random() < 0.04) spawnParticle(c.x, c.y);
+      }
+
+      // ── 6. 漆膜主體 ──
+      ctx.beginPath();
+      ctx.moveTo(0, paintTop);
+      ctx.lineTo(W, paintTop);
+      for (let i = cols-1; i >= 0; i--) {
+        ctx.lineTo(i, paintEdge[i]);
+      }
+      ctx.closePath();
+      const pg = ctx.createLinearGradient(0, paintTop, 0, paintBot);
+      pg.addColorStop(0,   '#4cb2e8');
+      pg.addColorStop(0.4, '#2471a3');
+      pg.addColorStop(1,   '#1a5a8a');
+      ctx.fillStyle = pg;
+      ctx.fill();
+
+      // 漆膜頂高光
+      ctx.beginPath();
+      ctx.moveTo(0, paintTop); ctx.lineTo(W, paintTop);
+      ctx.strokeStyle = 'rgba(160,225,255,0.5)';
+      ctx.lineWidth = 1.5; ctx.stroke();
+
+      // 漆膜文字（有足夠空間才顯示）
+      const avgEdge = paintEdge.reduce((s,v) => s+v, 0) / cols;
+      if (avgEdge - paintTop > 18) {
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.font = '600 12px "Noto Sans TC",sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('防水漆膜', W/2, (paintTop + avgEdge)/2 + 4);
+      }
+
+      // ── 7. 所有裂縫繪製（永久累積）──
+      // 先畫較老/較寬的（depth 高），再畫細的
+      ctx.save();
+      // 用 clip 限制裂縫只在漆膜範圍內顯示
+      ctx.beginPath();
+      ctx.moveTo(0, paintTop);
+      ctx.lineTo(W, paintTop);
+      for (let i = cols-1; i >= 0; i--) ctx.lineTo(i, paintEdge[i]);
+      ctx.closePath();
+      ctx.clip();
+
+      allCracks.forEach(crack => {
+        if (crack.segs.length < 2) return;
+        ctx.beginPath();
+        ctx.moveTo(crack.segs[0].x, crack.segs[0].y);
+        for (let s = 1; s < crack.segs.length; s++) {
+          ctx.lineTo(crack.segs[s].x, crack.segs[s].y);
+        }
+        // 橘黃色裂縫，越深越亮
+        const alpha = 0.55 + (crack.depth / 3) * 0.35;
+        ctx.strokeStyle = `hsla(${crack.hue},82%,60%,${alpha})`;
+        ctx.lineWidth   = crack.width;
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+        ctx.stroke();
+
+        // 裂縫兩側暗邊（加強龜裂立體感）
+        if (crack.width > 0.8) {
+          ctx.globalAlpha = 0.2;
+          ctx.strokeStyle = 'rgba(0,20,50,0.6)';
+          ctx.lineWidth   = crack.width + 1.5;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          // 重畫亮色蓋回去
+          ctx.strokeStyle = `hsla(${crack.hue},82%,60%,${alpha})`;
+          ctx.lineWidth   = crack.width;
+          ctx.stroke();
+        }
+
+        // 成長中裂縫的前端亮點
+        if (!crack.done && crack.segs.length > 0) {
+          const tip = crack.segs[crack.segs.length-1];
+          ctx.beginPath();
+          ctx.arc(tip.x, tip.y, crack.width * 1.4, 0, Math.PI*2);
+          ctx.fillStyle = `hsla(${crack.hue},90%,78%,0.9)`;
+          ctx.fill();
+        }
+      });
+      ctx.restore();
+
+      // ── 8. 粒子 ──
+      for (let i = particles.length-1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        p.vy += 0.035;
+        p.vx *= 0.97;
+        p.life -= p.decay;
+        if (p.life <= 0 || p.y > H+8) { particles.splice(i, 1); continue; }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI*2);
+        ctx.fillStyle = `hsla(${p.hue},78%,62%,${p.life*0.75})`;
+        ctx.fill();
+      }
+
+      // ── 9. 標注 ──
+      // 強鹼侵蝕層標籤（描邊取代底色方塊）
+      ctx.font = '600 12px "Noto Sans TC",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.strokeStyle = 'rgba(0,0,0,0.55)';
+      ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+      ctx.strokeText('強鹼侵蝕層', W/2, paintBot + erosionH/2 + 5);
+      ctx.fillStyle = 'rgba(255,200,80,0.95)';
+      ctx.fillText('強鹼侵蝕層', W/2, paintBot + erosionH/2 + 5);
+
+      // 水泥基材標籤
+      ctx.font = '600 11px "Noto Sans TC",sans-serif';
+      ctx.textAlign = 'right';
+      // 描邊
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+      ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+      ctx.strokeText('水泥基材 · 強鹼狀態', W - 10, H - 8);
+      ctx.fillStyle = `rgba(255,185,70,${0.75 + breathe * 0.25})`;
+      ctx.fillText('水泥基材 · 強鹼狀態', W - 10, H - 8);
+
+      // pH 標籤描邊
+      ctx.font = '700 11px "JetBrains Mono",monospace';
+      ctx.textAlign = 'left';
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+      ctx.lineWidth = 3;
+      ctx.strokeText(`pH 12–13`, 10, erosionBot + 16);
+      ctx.fillStyle = `rgba(255,200,80,${0.8 + breathe * 0.2})`;
+      ctx.fillText(`pH 12–13`, 10, erosionBot + 16);
+
+      requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+  }
+})();
+</script>
+(function() {
+  const wrap   = document.getElementById('alkaliWrap');
+  const canvas = document.getElementById('alkaliCanvas');
+  if (!wrap || !canvas) return;
+
+  const startObs = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    startObs.disconnect();
+    initAlkali();
+  }, { threshold: 0.3 });
+  startObs.observe(wrap);
+
+  function initAlkali() {
+    const W  = wrap.clientWidth;
+    const H  = 240;
+    canvas.width  = W * 2;
+    canvas.height = H * 2;
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2, 2);
+
+    // ── 層位 ──
+    // 漆膜：厚，佔中段大部分
+    const paintTop  = H * 0.12;   // 漆膜頂
+    const paintBot  = H * 0.60;   // 漆膜底（初始）
+    const paintH    = paintBot - paintTop;  // 漆膜厚度
+
+    // 侵蝕層：漆膜底到水泥頂之間
+    const erosionH  = H * 0.12;   // 侵蝕層固定厚度
+    const erosionBot = paintBot + erosionH; // 侵蝕層底部
+
+    // 水泥層：侵蝕層以下
+    const cementTop = erosionBot;
+
+    const cols = Math.ceil(W);
+
+    // ── 漆膜底部侵蝕邊緣（從 paintBot 開始，逐漸往上消退）──
+    const paintEdge   = new Float32Array(cols).fill(paintBot);
+    // 每列侵蝕速度不一樣（製造不規則感）
+    const erodeSpeed  = Float32Array.from({length: cols}, () => 0.008 + Math.random()*0.012);
+    // 侵蝕累積量（0~1），到 1 才真的開始往上消退
+    const erodeAmt    = new Float32Array(cols).fill(0);
+
+    // ── 裂解分支樹系統 ──
+    // 每條裂縫從漆膜底部某 x 往上蔓延，有子分支
+    const cracks = [];
+    let crackTimer = 0;
+
+    function spawnCrack(startX) {
+      cracks.push({
+        segs: [{ x: startX, y: paintBot }],  // 已畫的節點
+        x: startX,
+        y: paintBot,
+        life: 1,
+        maxY: paintTop + paintH * (0.1 + Math.random()*0.55),  // 最高能到多高
+        angle: -Math.PI/2 + (Math.random()-0.5)*0.8,
+        speed: 0.6 + Math.random()*0.8,
+        branches: 0,
+        maxBranches: Math.floor(Math.random()*3) + 1,
+        width: 1 + Math.random()*1.2,
+        hue: 28 + Math.random()*20,
+        done: false,
+        childCracks: [],
+      });
+    }
+
+    function growCrack(crack) {
+      if (crack.done) return;
+      if (crack.y <= crack.maxY) { crack.done = true; return; }
+
+      // 前進
+      crack.angle += (Math.random()-0.5)*0.35;
+      // 讓裂縫偏往上（-y 方向）
+      const clampedAngle = Math.max(-Math.PI*0.95, Math.min(-Math.PI*0.05, crack.angle));
+      crack.x += Math.cos(clampedAngle) * crack.speed;
+      crack.y += Math.sin(clampedAngle) * crack.speed;
+      crack.x  = Math.max(2, Math.min(W-2, crack.x));
+      crack.segs.push({ x: crack.x, y: crack.y });
+
+      // 產生分支
+      if (crack.branches < crack.maxBranches && Math.random() < 0.025) {
+        crack.branches++;
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        cracks.push({
+          segs: [{ x: crack.x, y: crack.y }],
+          x: crack.x, y: crack.y,
+          life: crack.life * 0.7,
+          maxY: crack.y - paintH*(0.1 + Math.random()*0.25),
+          angle: clampedAngle + dir*(0.4 + Math.random()*0.5),
+          speed: crack.speed * 0.7,
+          branches: crack.maxBranches,  // 子分支不再生分支
+          maxBranches: crack.maxBranches,
+          width: crack.width * 0.6,
+          hue: crack.hue,
+          done: false,
+          childCracks: [],
+        });
+      }
+    }
+
+    // ── 粉化粒子 ──
+    const particles = [];
+    function spawnParticle(x, y, upward) {
+      // upward=true 從漆膜底部往上噴；upward=false 從裂縫往外散
+      const baseAngle = upward
+        ? -Math.PI/2 + (Math.random()-0.5)*Math.PI*0.7
+        : (Math.random()-0.5)*Math.PI*2;
+      const spd = upward
+        ? 0.3 + Math.random()*1.0
+        : 0.2 + Math.random()*0.7;
+      particles.push({
+        x, y,
+        vx: Math.cos(baseAngle)*spd,
+        vy: Math.sin(baseAngle)*spd,
+        life: 1,
+        decay: 0.015 + Math.random()*0.02,
+        r: 0.8 + Math.random()*2,
+        hue: 28 + Math.random()*30,
+      });
+    }
+
+    // ── 漆膜上方半圓凸起 ──
+    const bumps = [];
+    let bumpTimer = 60;
+
+    function spawnBump() {
+      bumps.push({
+        x: 30 + Math.random()*(W-60),
+        w: 20 + Math.random()*26,
+        maxH: 12 + Math.random()*12,
+        h: 0,
+        phase: 'grow',
+        holdT: 0,
+        life: 1,
+        burstParts: 0,
+        hue: 205 + Math.random()*20,
+      });
+    }
+
+    let t = 0;
+
+    function drawFrame() {
+      ctx.clearRect(0, 0, W, H);
+      t++;
+
+      // ────────────────────────────────
+      // 1. 水泥層
+      // ────────────────────────────────
+      const cg = ctx.createLinearGradient(0, cementTop, 0, H);
+      cg.addColorStop(0, '#828e8e');
+      cg.addColorStop(1, '#5c6868');
+      ctx.fillStyle = cg;
+      ctx.fillRect(0, cementTop, W, H - cementTop);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.font = '600 11px "JetBrains Mono",monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('CEMENT BASE  pH 12–13', W/2, cementTop + (H-cementTop)/2 + 4);
+
+      // ────────────────────────────────
+      // 2. 侵蝕層（漆膜底到水泥頂之間）
+      // ────────────────────────────────
+      // 帶輕微波紋的橘黃色液體層
+      ctx.beginPath();
+      ctx.moveTo(0, erosionBot);
+      ctx.lineTo(W, erosionBot);
+      ctx.lineTo(W, paintBot);
+      // 頂邊加波紋
+      for (let i = cols-1; i >= 0; i--) {
+        const wave = Math.sin(t*0.07 + i*0.12)*1.6 + Math.sin(t*0.13 + i*0.22)*0.8;
+        ctx.lineTo(i, paintBot + wave);
+      }
+      ctx.closePath();
+      const eg = ctx.createLinearGradient(0, paintBot, 0, erosionBot);
+      eg.addColorStop(0,   'rgba(230,126,34,0.75)');
+      eg.addColorStop(0.5, 'rgba(200,95,20,0.85)');
+      eg.addColorStop(1,   'rgba(160,70,10,0.6)');
+      ctx.fillStyle = eg;
+      ctx.fill();
+
+      // 波紋線
+      for (let row = 0; row < 3; row++) {
+        ctx.beginPath();
+        const baseY = paintBot + erosionH*(0.25 + row*0.25);
+        for (let i = 0; i < cols; i++) {
+          const wy = baseY + Math.sin(t*0.06 + i*0.15 + row*1.2)*1.4;
+          i === 0 ? ctx.moveTo(i, wy) : ctx.lineTo(i, wy);
+        }
+        ctx.strokeStyle = `rgba(255,180,60,${0.25 - row*0.06})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+
+      // ────────────────────────────────
+      // 3. 更新侵蝕量 & paintEdge
+      // ────────────────────────────────
+      for (let i = 0; i < cols; i++) {
+        erodeAmt[i] = Math.min(1, erodeAmt[i] + erodeSpeed[i] * 0.01);
+        if (erodeAmt[i] > 0.05) {
+          // 漆膜底部往上消退
+          const maxErode = paintH * 0.7;
+          const targetEdge = paintBot - erodeAmt[i] * maxErode
+            + Math.sin(t*0.04 + i*0.22)*1.5;
+          paintEdge[i] += (targetEdge - paintEdge[i]) * 0.05;
+          // 底部侵蝕面噴粒子
+          if (Math.random() < 0.004 && erodeAmt[i] > 0.2) {
+            spawnParticle(i, paintEdge[i], false);
+          }
+        }
+      }
+
+      // ────────────────────────────────
+      // 4. 裂解分支更新 & 生成
+      // ────────────────────────────────
+      crackTimer++;
+      if (crackTimer > 80 + Math.random()*60) {
+        spawnCrack(20 + Math.random()*(W-40));
+        crackTimer = 0;
+      }
+      // 每幀推進所有裂縫
+      cracks.forEach(c => {
+        if (!c.done) growCrack(c);
+        // 裂縫頂端偶爾噴粒子
+        if (!c.done && Math.random() < 0.06) {
+          spawnParticle(c.x, c.y, false);
+        }
+      });
+      // 移除太老的裂縫（保留最多 20 條）
+      if (cracks.length > 20) cracks.splice(0, cracks.length - 20);
+
+      // ────────────────────────────────
+      // 5. 漆膜主體
+      // ────────────────────────────────
+      ctx.beginPath();
+      ctx.moveTo(0, paintTop);
+      ctx.lineTo(W, paintTop);
+      for (let i = cols-1; i >= 0; i--) {
+        ctx.lineTo(i, paintEdge[i]);
+      }
+      ctx.closePath();
+      const pg = ctx.createLinearGradient(0, paintTop, 0, paintBot);
+      pg.addColorStop(0,   '#4aaee0');
+      pg.addColorStop(0.45,'#2471a3');
+      pg.addColorStop(1,   '#1a5a8a');
+      ctx.fillStyle = pg;
+      ctx.fill();
+
+      // 漆膜頂高光
+      ctx.beginPath();
+      ctx.moveTo(0, paintTop); ctx.lineTo(W, paintTop);
+      ctx.strokeStyle = 'rgba(160,220,255,0.55)';
+      ctx.lineWidth = 1.5; ctx.stroke();
+
+      // 漆膜文字
+      ctx.fillStyle = 'rgba(255,255,255,0.65)';
+      ctx.font = '600 11px "JetBrains Mono",monospace';
+      ctx.textAlign = 'center';
+      // 只在漆膜夠厚時才顯示
+      const avgEdge = paintEdge.reduce((s,v)=>s+v,0)/cols;
+      if (avgEdge - paintTop > 16) {
+        ctx.fillText('WATERPROOF LAYER', W/2, (paintTop + avgEdge)/2 + 4);
+      }
+
+      // ────────────────────────────────
+      // 6. 裂縫繪製（畫在漆膜上方）
+      // ────────────────────────────────
+      cracks.forEach(crack => {
+        if (crack.segs.length < 2) return;
+        ctx.beginPath();
+        ctx.moveTo(crack.segs[0].x, crack.segs[0].y);
+        crack.segs.forEach(s => ctx.lineTo(s.x, s.y));
+        ctx.strokeStyle = `hsla(${crack.hue},80%,62%,0.75)`;
+        ctx.lineWidth = crack.width;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+
+        // 裂縫頂端亮點
+        const tip = crack.segs[crack.segs.length-1];
+        ctx.beginPath();
+        ctx.arc(tip.x, tip.y, crack.width*1.2, 0, Math.PI*2);
+        ctx.fillStyle = `hsla(${crack.hue},90%,75%,0.9)`;
+        ctx.fill();
+      });
+
+      // ────────────────────────────────
+      // 7. 半圓凸起更新 & 繪製
+      // ────────────────────────────────
+      bumpTimer++;
+      if (bumpTimer > 70 + Math.random()*50) {
+        spawnBump(); bumpTimer = 0;
+      }
+      for (let i = bumps.length-1; i >= 0; i--) {
+        const bmp = bumps[i];
+        if (bmp.phase === 'grow') {
+          bmp.h += (bmp.maxH - bmp.h) * 0.1;
+          if (bmp.h > bmp.maxH*0.9) { bmp.phase = 'hold'; bmp.holdT = 0; }
+        } else if (bmp.phase === 'hold') {
+          bmp.holdT++;
+          bmp.h = bmp.maxH + Math.sin(bmp.holdT*0.28)*1.2;
+          if (bmp.holdT > 45) bmp.phase = 'burst';
+        } else if (bmp.phase === 'burst') {
+          if (bmp.burstParts < 20) {
+            for (let k=0;k<4;k++) spawnParticle(bmp.x, paintTop - bmp.h*0.5, true);
+            bmp.burstParts += 4;
+          }
+          bmp.h *= 0.9;
+          bmp.life -= 0.03;
+          if (bmp.life <= 0) { bumps.splice(i,1); continue; }
+        }
+
+        if (bmp.h < 0.5) continue;
+        const alpha = bmp.phase==='burst' ? bmp.life : 1;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        ctx.ellipse(bmp.x, paintTop, bmp.w/2, bmp.h, 0, Math.PI, 0);
+        ctx.closePath();
+        const bg = ctx.createRadialGradient(bmp.x, paintTop-bmp.h*0.4, 0, bmp.x, paintTop, bmp.w/2);
+        bg.addColorStop(0,   `hsla(${bmp.hue},75%,72%,1)`);
+        bg.addColorStop(0.6, `hsla(${bmp.hue},65%,50%,0.9)`);
+        bg.addColorStop(1,   `hsla(${bmp.hue},55%,32%,0.8)`);
+        ctx.fillStyle = bg;
+        ctx.fill();
+        // 高光
+        ctx.beginPath();
+        ctx.ellipse(bmp.x-bmp.w*0.1, paintTop-bmp.h*0.55, bmp.w*0.28, bmp.h*0.2, -0.3, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(255,255,255,0.38)';
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // ────────────────────────────────
+      // 8. 粒子
+      // ────────────────────────────────
+      for (let i = particles.length-1; i >= 0; i--) {
+        const p = particles[i];
+        p.x  += p.vx; p.y += p.vy;
+        p.vy += 0.04;
+        p.vx *= 0.97;
+        p.life -= p.decay;
+        if (p.life <= 0 || p.y > H+10) { particles.splice(i,1); continue; }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r*p.life, 0, Math.PI*2);
+        ctx.fillStyle = `hsla(${p.hue},80%,65%,${p.life*0.8})`;
+        ctx.fill();
+      }
+
+      // ── 標注文字 ──
+      ctx.font = '10px "JetBrains Mono",monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillText('▲ 粉化脫落 / 裂解分支', 8, paintTop - 6);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(230,126,34,0.55)';
+      ctx.fillText('強鹼侵蝕層', W-8, paintBot + erosionH/2 + 4);
+
+      requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+  }
+})();
 </script>
 </body>
 </html>
