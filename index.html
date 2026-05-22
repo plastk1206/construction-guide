@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>壹所寓研｜施工知識庫</title>
+<meta name="description" content="壹所寓研空間有限公司 — 施工技術研究與材料科學整理">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #1a1a1a;
+  --paper:  #f5f0e8;
+  --accent: #c0392b;
+  --card:   #faf7f0;
+  --border: #ccc9bf;
+  --muted:  #6b6b6b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 88px 32px 66px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  opacity: .07;
+  pointer-events: none;
+}
+.hero-ring.r1 { width: 240px; height: 240px; top: -80px;  right: -60px;  }
+.hero-ring.r2 { width: 420px; height: 420px; top: -170px; right: -150px; }
+.hero-ring.r3 { width: 600px; height: 600px; top: -260px; right: -240px; }
+.hero-line {
+  position: absolute; left: 0; bottom: 0;
+  height: 3px; width: 300px;
+  background: var(--accent);
+}
+.hero-inner { max-width: 900px; margin: 0 auto; position: relative; }
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: .28em;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: clamp(32px, 5.2vw, 52px);
+  line-height: 1.22;
+  letter-spacing: .01em;
+}
+.hero h1 .sep { color: var(--accent); margin: 0 2px; }
+.hero-note {
+  margin-top: 16px;
+  color: #9a948c;
+  font-size: 16px;
+}
+
+/* ── WRAP ── */
+.wrap { max-width: 900px; margin: 0 auto; padding: 56px 32px 40px; }
+.sec-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: .18em;
+  color: var(--accent);
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 28px;
+}
+.sec-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── CARD GRID ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+@media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+
+.article-card {
+  display: flex; flex-direction: column;
+  min-height: 210px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  padding: 26px 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.article-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(26,26,26,.13);
+}
+.card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: .12em;
+  color: var(--accent);
+}
+.card-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .1em;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.article-card h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700; font-size: 23px;
+  line-height: 1.35;
+  margin: 14px 0 8px;
+}
+.article-card p {
+  font-size: 15px; color: #555; line-height: 1.6;
+}
+.card-cta {
+  margin-top: auto; padding-top: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 700;
+  color: var(--accent);
+}
+
+/* placeholder slot for future articles */
+.article-card.placeholder {
+  background: transparent;
+  border: 1.5px dashed var(--border);
+  align-items: center; justify-content: center;
+  text-align: center;
+  cursor: default;
+}
+.article-card.placeholder:hover { transform: none; box-shadow: none; }
+.placeholder .ph-mark {
+  font-size: 36px; font-weight: 300;
+  color: var(--border); line-height: 1;
+}
+.placeholder p { color: var(--muted); margin-top: 10px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  color: #6b6b6b;
+  text-align: center;
+  padding: 32px;
+  margin-top: 50px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .05em;
+}
+
+/* ── REVEAL ON LOAD ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+.reveal { opacity: 0; animation: fadeUp .6s ease forwards; }
+.d1 { animation-delay: .08s; }
+.d2 { animation-delay: .18s; }
+.d3 { animation-delay: .28s; }
+.d4 { animation-delay: .38s; }
+</style>
+</head>
+<body>
+
+<!-- ════════════ HERO ════════════ -->
+<header class="hero">
+  <div class="hero-ring r1"></div>
+  <div class="hero-ring r2"></div>
+  <div class="hero-ring r3"></div>
+  <div class="hero-line"></div>
+  <div class="hero-inner">
+    <div class="hero-tag reveal d1">Construction Knowledge Base</div>
+    <h1 class="reveal d2">壹所寓研<span class="sep">｜</span>施工知識庫</h1>
+    <p class="hero-note reveal d3">施工技術研究與材料科學整理｜以國際規範與實驗數據為依據</p>
+  </div>
+</header>
+
+<!-- ════════════ ARTICLES ════════════ -->
+<main class="wrap">
+  <div class="sec-label reveal d2">全部文章</div>
+
+  <div class="cards">
+
+    <!-- 文章 01 -->
+    <a class="article-card reveal d3" href="./waterproof/">
+      <span class="card-num">01</span>
+      <span class="card-tag">防水 · 材料科學</span>
+      <h2>水泥含水率與防水效力</h2>
+      <p>完工後隔天施工可能降低防水效力</p>
+      <span class="card-cta">閱讀文章 →</span>
+    </a>
+
+    <!--
+      要新增文章時，複製下方一張卡片並修改：
+      <a class="article-card" href="./資料夾名稱/">
+        <span class="card-num">02</span>
+        <span class="card-tag">分類標籤</span>
+        <h2>文章標題</h2>
+        <p>文章副標</p>
+        <span class="card-cta">閱讀文章 →</span>
+      </a>
+    -->
+
+    <!-- 預留：之後新增文章卡片的位置 -->
+    <div class="article-card placeholder reveal d4">
+      <span class="ph-mark">+</span>
+      <p>更多施工主題<br>陸續整理中</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  壹所寓研空間有限公司 · 施工技術研究整理 · 2026
+</footer>
+
+</body>
+</html>
